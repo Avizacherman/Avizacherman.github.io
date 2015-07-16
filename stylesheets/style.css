@@ -12,6 +12,9 @@
 	border-width: 1px;
 	padding: 75px 0px;
 	margin:0;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 .top{
@@ -31,4 +34,22 @@
 
 .right{
 	border-right-width: 0;
+}
+
+.winner{
+	position: absolute;
+	top: 45%;
+	left: 45%;
+	display: none;
+}
+
+.sizer {
+	position: absolute;
+	top: 40%;
+	left: 45%;
+}
+.start{
+	position: absolute;
+	top: 45%;
+	left: 45%;
 }
