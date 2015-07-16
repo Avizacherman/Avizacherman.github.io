@@ -53,3 +53,21 @@
 	top: 45%;
 	left: 45%;
 }
+
+.player1 {
+	position: absolute;
+	top: 30%;
+	left: 45%;
+}
+
+.player2 {
+	position: absolute;
+	top: 30%;
+	left: 54%;
+}
+
+.playernames {
+	position: absolute;
+	top:35%;
+	left:42%;
+}

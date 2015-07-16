@@ -104,41 +104,42 @@ function checkWinCondition(arr){
 var win = checkRows(arr)
 
 if(win[0]){
-	$('.winnerIs').text(win[1] + ' wins')
-
-	return true
+	return [true, win[1]]
 }
 
 win = checkColumns(arr)
 
 if(win[0]){
-	$('.winnerIs').text(win[1] + ' wins')
-	return true
+	return [true, win[1]]
 }
 
 win = checkDiagonal(arr)
 
 if(win[0]){
-	$('.winnerIs').text(win[1] + ' wins')
-	return true
+	return [true, win[1]]
 
 }
 
 
 }
 
-Game = function(gridsize){
+Game = function(gridsize, players){
 	this.gridsize = gridsize;
-	
 
+
+	if(typeof(players) !='undefined'){
+	var player1 = players[0];
+	var player2 = players[1];	
+	}
+	
 
 	this.render = function(){
 		drawGrid(gridsize)
-		
 
 
 		theGrid.forEach(function(element, indexI){
 			
+
 			// $row = $('<div>');
 			// $row.addClass('row');
 			
@@ -184,8 +185,17 @@ Game = function(gridsize){
 
 						}
 					}
-					if(checkWinCondition(theGrid)){
+					endGame = checkWinCondition(theGrid)
+					if(endGame[0]){
 						clearTheGrid();
+						switch(endGame[1]){
+							case 'x':
+							$('.winnerIs').text(player1 + ' wins')
+							break
+							case 'o':
+							$('.winnerIs').text(player2 + ' wins')
+						}
+
 						$('.winner').toggle();
 						return false;
 					}
@@ -216,6 +226,9 @@ Game = function(gridsize){
 		$('.winner').toggle();
 		$('.start').toggle();
 		$('.sizer').toggle();
+		$('.player1').toggle();
+		$('.player2').toggle();
+		$('.playernames').toggle();
 	}
 }
 var size = 0;
@@ -223,6 +236,7 @@ var size = 0;
 var Size = function(){
 	this.set = function(){
 			if($('#size_3').is(':checked')){
+				$('#size_3').attr('checked', false);
 				$('.sizer').toggle();
 				return 3;
 			} else if($('#size_4').is(':checked')){
@@ -239,13 +253,34 @@ var Size = function(){
 	}
 }
 
+var PlayerNames = function(){
+	
+this.setPlayers = function(){
+	var opponent1 = $('#player1').val();
+	var opponent2 = $('#player2').val();
+	
+	$('#player1').val('');
+	$('#player2').val('');
+
+	$('.player1').toggle();
+	$('.player2').toggle();
+	$('.playernames').toggle();
+
+	return [opponent1, opponent2];
+}
+	// if()
+}
+
 var size = new Size();
+var gamers = new PlayerNames(); 
 
 $(document).ready(function(){
 	$start = $('.start');
 	$start.on('click', function(){
 		$start.toggle();
-		var ticTacToe = new Game(size.set());
+		debugger
+		var ticTacToe = new Game(size.set(), gamers.setPlayers());
+
 		ticTacToe.render();
 		})
 
