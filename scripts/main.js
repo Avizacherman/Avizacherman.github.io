@@ -1,4 +1,8 @@
+//remaing bugs: Sometimes computer image doesn't display
+//remaining features: Save/Load State, score tally, AI difficulty modes
+
 var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/X_mark_18x18_02.svg/2000px-X_mark_18x18_02.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/2000px-X_mark.svg.png', 'http://zidilifepullzone.5giants.netdna-cdn.com/wp-content/uploads/2014/09/x_spot_zidi.png', 'http://i.imgur.com/wirqMZa.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/OS_X-Logo.svg/2000px-OS_X-Logo.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/X11.svg/275px-X11.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/26/34/x-400.png'], o: ['https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Opera_O.svg/512px-Opera_O.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/20/25/o-400.png', 'http://etc.usf.edu/presentations/extras/letters/fridge_magnets/red/25/o-300.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INF.jpg', 'http://preschool.uen.org/curriculum/May_s/Letter_O.jpg', 'http://www.wpclipart.com/education/animal_alphabet/animal_alphabet_O.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INFPINK.jpg', 'https://pixabay.com/get/f122909fda6aeff498c9/1437014441/letter-146055_1280.png']};
+
 var computerNames = ['Brock Hardbody - AI', 'Rip Johnson - AI', 'Jones McMuscles - AI']
 
 var theGrid =[]
@@ -72,6 +76,7 @@ function checkColumns(arr){
 				return [true,'x', column];
 		} else if (oCount===arr.length){
 				column = i;
+				
 				return [true,'o', column];
 			}
 	}
@@ -106,8 +111,17 @@ function checkDiagonal(arr){
 	return false;
 }
 
-function lightUp(arr){
-
+function lightUp(source, placement, arr){
+	switch(source){
+		case 'row':
+			for(i=0; i< arr.length; i++ ){
+				$('#r'+placement+'c'+i).css('border-width', '2px').css('border-color', 'red');
+			}
+		case 'column':
+				for(i=0; i< arr.length; i++ ){
+				$('#r'+i+'c'+placement).css('border-width', '2px').css('border-color', 'red');
+			}
+	}
 }
 
 function checkWinCondition(arr){
@@ -127,7 +141,6 @@ if(win[0]){
 win = checkDiagonal(arr)
 
 if(win[0]){
-	console.log(win[2]);
 	return [true, win[1]]
 
 }
@@ -138,17 +151,17 @@ return false;
 function randomComputerMove(arr){
 	var row = Math.floor(Math.random()*arr.length)
 	var col = Math.floor(Math.random()*arr.length)
-	while(arr[row][col] != 'o'){
+	var exitThisLoop = false
+	while(!exitThisLoop){
 		if(arr[row][col]==='s'){
 			arr[row][col]='o';
-			
+			exitThisLoop = true;
 		} else {
 		 row = Math.floor(Math.random()*arr.length)
 		 col = Math.floor(Math.random()*arr.length)
 		 
 		}
 	}
-	console.log(row + ',' + col)
 	return [row,col]
 
 }
@@ -157,7 +170,6 @@ function computerTurn(arr){
 			var gridsize=arr.length
 			if(tieCounter===(gridsize*gridsize)){
 										$('.winnerIs').text('ITS A TIE')
-										clearTheGrid();
 										$('.winner').toggle();
 										return false;
 										}
@@ -171,9 +183,8 @@ function computerTurn(arr){
 		for(var j = 0; j < arr.length; j++){
 			if(arr[Math.abs(i-j)][j]==='o'){
 				oCount++
-				console.log(oCount)
 				}
-				if (oCount === 2){
+				if (oCount === arr.length-1){
 					for(var k = arr.length-1; i >= 0; i--){
 						if(i===arr.length-1 || i === 0){
 							for(var l = 0; j < arr[k].length; j++){
@@ -194,14 +205,12 @@ function computerTurn(arr){
 	for(var j = 0; j < arr.length; j++){
 		if(arr[i][j]==='o'){
 			oCount++
-			if(oCount===2){
-				oCountRow = i;
+			if(oCount===arr.length-1){
+				var oCountRow = i;
 			}
-			console.log(oCount)
 			}
-				if (oCount === 2){
+				if (oCount === arr.length-1){
 					for(var l = 0; l < arr.length;  l++){
-						console.log('trigger')
 						if(arr[oCountRow][l]==='s'){
 							arr[oCountRow][l]='o'
 							return [oCountRow,l];
@@ -216,14 +225,12 @@ function computerTurn(arr){
 	for(var j = 0; j < arr.length; j++){
 		if(arr[j][i]==='o'){
 			oCount++
-			if(oCount===2){
-				oCountColumn = i;
+			if(oCount===arr.length-1){
+			var	oCountColumn = i;
 			}
-			console.log(oCount)
 			}
-			if (oCount === 2){
+			if (oCount === arr.length-1){
 				for(var l = 0; l < arr.length;  l++){
-					console.log('trigger')
 					if(arr[l][oCountColumn]==='s'){
 						arr[l][oCountColumn]='o'
 						return [l,oCountColumn];
@@ -240,9 +247,8 @@ function computerTurn(arr){
 		for(var j = 0; j < arr.length; j++){
 			if(arr[Math.abs(i-j)][j]==='x'){
 				xCount++
-				console.log(xCount)
 				}
-				if (xCount === 2){
+				if (xCount === arr.length-1){
 					for(var k = arr.length-1; i >= 0; i--){
 						if(i===arr.length-1 || i === 0){
 							for(var l = 0; j < arr[k].length; j++){
@@ -259,18 +265,16 @@ function computerTurn(arr){
 	}
 	for(var i = 0; i < arr.length; i++){
 		xCount = 0;
-		xCount = 0;
+		oCount = 0;
 	for(var j = 0; j < arr.length; j++){
 		if(arr[i][j]==='x'){
 			xCount++
-			if(xCount===2){
-				xCountRow = i;
+			if(xCount===arr.length-1){
+			var	xCountRow = i;
 			}
-			console.log(xCount)
 			}
-				if (xCount === 2){
+				if (xCount === arr.length-1){
 					for(var l = 0; l < arr.length;  l++){
-						console.log('trigger')
 						if(arr[xCountRow][l]==='s'){
 							arr[xCountRow][l]='o'
 							return [xCountRow,l];
@@ -281,18 +285,16 @@ function computerTurn(arr){
 	}
 		for(var i = 0; i < arr.length; i++){
 		xCount = 0;
-		xCount = 0;
+		oCount = 0;
 	for(var j = 0; j < arr.length; j++){
 		if(arr[j][i]==='x'){
 			xCount++
-			if(xCount===2){
-				xCountColumn = i;
+			if(xCount===arr.length-1){
+			var	xCountColumn = i;
 			}
-			console.log(xCount)
 			}
-			if (xCount === 2){
+			if (xCount === arr.length-1){
 				for(var l = 0; l < arr.length;  l++){
-					console.log('trigger')
 					if(arr[l][xCountColumn]==='s'){
 						arr[l][xCountColumn]='o'
 						return [l,xCountColumn];
@@ -304,6 +306,7 @@ function computerTurn(arr){
 
 	//first move diagonal
 	//corner
+
 	for(var i = arr.length-1; i >= 0; i--){
 		xCount = 0;
 		oCount = 0;
@@ -312,18 +315,24 @@ function computerTurn(arr){
 		if(arr[Math.abs(i-j)][j]==='x'){
 			xCountRow=Math.abs(i-j);
 			xCountColumn=j;
-			if(firstMove){
-			firstMove=false;	
-			return [Math.abs(xCountRow-(arr.length-1)), Math.abs(xCountColumn-(arr.length-1))]
+			if(arr[Math.abs(xCountRow-(arr.length-1))][Math.abs(xCountColumn-(arr.length-1))]==='s'){
+					
+
+				if(firstMove){	
+				firstMove=false;	
+				return [Math.abs(xCountRow-(arr.length-1)), Math.abs(xCountColumn-(arr.length-1))]
+				}
 			}
-				for(var k = arr.length-1; i >= 0; i--){
-					if(i===arr.length-1 || i === 0){
-						for(var l = 0; j < arr[k].length; j++){
-								if(arr[Math.abs(k-l)][l]==='s' && k != l){
-									arr[Math.abs(k-l)][l]='o'
-									return [Math.abs(k-l),l];
-									}
-								} 
+			for(var k = arr.length-1; i >= 0; i--){
+				if(i===arr.length-1 || i === 0){
+					
+					for(var l = 0; j < arr[k].length; j++){
+							if(arr[Math.abs(k-l)][l]==='s' && k != l){
+								
+								arr[Math.abs(k-l)][l]='o'
+								return [Math.abs(k-l),l];
+								}
+							} 
 					}
 				}
 			}
@@ -331,7 +340,7 @@ function computerTurn(arr){
 	}
 }
 
-	//middle
+	//middle 
 	if(arr[arr.length-2][arr.length-2]==='s')
 	{
 		arr[arr.length-2][arr.length-2]==='o'		
@@ -387,9 +396,8 @@ Game = function(gridsize, players){
 				$div.on('click', function(){
 					$div = ($(this));
 					
-					tieCounter++
 
-					if(theGrid[indexI][indexJ]==='s'){
+					 if(theGrid[indexI][indexJ]==='s'){
 						
 						if(turn === 'x'){
 							$div.css('background-image', "url("+randomImage('x')+")")
@@ -403,17 +411,21 @@ Game = function(gridsize, players){
 							turn = 'x'
 
 						}
-					}
-					if(player2==='AI'){
+							tieCounter++
+
+					} 
+					 if(player2==='AI' && turn === 'o'){
 								whereToPlace = computerTurn(theGrid)
 								if(!whereToPlace){return false}
 								$compDiv = $('#r'+whereToPlace[0]+'c'+whereToPlace[1])
 								theGrid[whereToPlace[0]][whereToPlace[1]] = 'o';
-								console.log($compDiv)	
 								$compDiv.css('background-image', "url("+randomImage('o')+")")	
 								turn = 'x'
+								tieCounter++
+
 							}
 					endGame = checkWinCondition(theGrid)
+
 					if(endGame[0]){
 						switch(endGame[1]){
 							case 'x':
@@ -454,6 +466,8 @@ Game = function(gridsize, players){
 	
 	this.resetButton = function(){
 		clearTheGrid();
+		tieCounter = 0;
+		firstMove = true;
 		$div = $('<div>')
 		$div.addClass('container');
 		$('body').append($div)

@@ -9,7 +9,7 @@
 	vertical-align: middle;
 	display: inline-block;
 	border:solid;
-	border-width: 1px;
+	border-width: 2px;
 	padding: 75px 0px;
 	margin:0;
 	background-size: contain;
@@ -39,14 +39,20 @@
 
 .winner{
 	position: absolute;
-	top: 45%;
-	left: 45%;
+	top: 40%;
+	left: 33%;
 	display: none;
 	text-align: center;
 	z-index: 1;
-	background: rgba(0,0,0,.4);
+	background: rgba(0,0,0,.5);
 	height: 30%;
 	width: 30%;
+}
+
+.reset{
+	background: rgba(255,255,255,.8);
+	margin-top: 7%;
+
 }
 
 .sizer {
