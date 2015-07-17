@@ -1,7 +1,9 @@
-//remaing bugs: Sometimes computer image doesn't display
+//remaing bugs: specific pattern due to random trigger
 //remaining features: Save/Load State, score tally, AI difficulty modes
+//Connect 4?
 
-var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/X_mark_18x18_02.svg/2000px-X_mark_18x18_02.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/2000px-X_mark.svg.png', 'http://zidilifepullzone.5giants.netdna-cdn.com/wp-content/uploads/2014/09/x_spot_zidi.png', 'http://i.imgur.com/wirqMZa.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/OS_X-Logo.svg/2000px-OS_X-Logo.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/X11.svg/275px-X11.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/26/34/x-400.png'], o: ['https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Opera_O.svg/512px-Opera_O.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/20/25/o-400.png', 'http://etc.usf.edu/presentations/extras/letters/fridge_magnets/red/25/o-300.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INF.jpg', 'http://preschool.uen.org/curriculum/May_s/Letter_O.jpg', 'http://www.wpclipart.com/education/animal_alphabet/animal_alphabet_O.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INFPINK.jpg', 'https://pixabay.com/get/f122909fda6aeff498c9/1437014441/letter-146055_1280.png']};
+var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/X_mark_18x18_02.svg/2000px-X_mark_18x18_02.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/2000px-X_mark.svg.png', 'http://zidilifepullzone.5giants.netdna-cdn.com/wp-content/uploads/2014/09/x_spot_zidi.png', 'http://i.imgur.com/wirqMZa.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/OS_X-Logo.svg/2000px-OS_X-Logo.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/X11.svg/275px-X11.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/26/34/x-400.png'], o: ['https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Opera_O.svg/512px-Opera_O.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/20/25/o-400.png', 'http://etc.usf.edu/presentations/extras/letters/fridge_magnets/red/25/o-300.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INF.jpg', 'http://preschool.uen.org/curriculum/May_s/Letter_O.jpg', 'http://www.wpclipart.com/education/animal_alphabet/animal_alphabet_O.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INFPINK.jpg', 'http://www.really-learn-english.com/image-files/long-o-sound.jpg']};
+
 
 var computerNames = ['Brock Hardbody - AI', 'Rip Johnson - AI', 'Jones McMuscles - AI']
 
@@ -23,6 +25,7 @@ function drawGrid(gridsize){
 
 function randomImage(letter){
 	var index = Math.floor(Math.random()*8);
+	
 		return imageBank[letter][index];
 	
 }
@@ -168,11 +171,13 @@ function randomComputerMove(arr){
 
 function computerTurn(arr){
 			var gridsize=arr.length
+			
 			if(tieCounter===(gridsize*gridsize)){
 										$('.winnerIs').text('ITS A TIE')
 										$('.winner').toggle();
 										return false;
 										}
+
 	//wins
 		var xCount = 0;
 		var oCount = 0; 
@@ -210,6 +215,7 @@ function computerTurn(arr){
 			}
 			}
 				if (oCount === arr.length-1){
+
 					for(var l = 0; l < arr.length;  l++){
 						if(arr[oCountRow][l]==='s'){
 							arr[oCountRow][l]='o'
@@ -247,6 +253,7 @@ function computerTurn(arr){
 		for(var j = 0; j < arr.length; j++){
 			if(arr[Math.abs(i-j)][j]==='x'){
 				xCount++
+
 				}
 				if (xCount === arr.length-1){
 					for(var k = arr.length-1; i >= 0; i--){
@@ -304,7 +311,7 @@ function computerTurn(arr){
 		}
 	}
 
-	//first move diagonal
+	//first move diagonal doesn't factor in with X is middle
 	//corner
 
 	for(var i = arr.length-1; i >= 0; i--){
@@ -315,18 +322,17 @@ function computerTurn(arr){
 		if(arr[Math.abs(i-j)][j]==='x'){
 			xCountRow=Math.abs(i-j);
 			xCountColumn=j;
-			if(arr[Math.abs(xCountRow-(arr.length-1))][Math.abs(xCountColumn-(arr.length-1))]==='s'){
-					
 
+			if(arr[Math.abs(xCountRow-(arr.length-1))][Math.abs(xCountColumn-(arr.length-1))]==='s'){
 				if(firstMove){	
 				firstMove=false;	
 				return [Math.abs(xCountRow-(arr.length-1)), Math.abs(xCountColumn-(arr.length-1))]
 				}
 			}
-			for(var k = arr.length-1; i >= 0; i--){
-				if(i===arr.length-1 || i === 0){
+			for(var k = arr.length-1; k >= 0; k--){
+				if(k===arr.length-1 || k === 0){
 					
-					for(var l = 0; j < arr[k].length; j++){
+					for(var l = 0; l < arr[k].length; l++){
 							if(arr[Math.abs(k-l)][l]==='s' && k != l){
 								
 								arr[Math.abs(k-l)][l]='o'
@@ -340,6 +346,23 @@ function computerTurn(arr){
 	}
 }
 
+//x is middle go for corner
+if(arr[arr.length-2][arr.length-2]==='x'){
+	for(var k = arr.length-1; k >= 0; k--){
+				if(k===arr.length-1 || k === 0){
+					
+					for(var l = 0; l < arr[k].length; l++){
+							if(arr[Math.abs(k-l)][l]==='s' && k != l){
+								
+								arr[Math.abs(k-l)][l]='o'
+								return [Math.abs(k-l),l];
+							}
+						} 
+					}
+				}
+			}
+
+
 	//middle 
 	if(arr[arr.length-2][arr.length-2]==='s')
 	{
@@ -348,6 +371,7 @@ function computerTurn(arr){
 	}
 //find only available (at Random)
 	var rando = randomComputerMove(arr)
+
 		return rando;
 	
 
