@@ -10,13 +10,15 @@
 <body>
 	<div class = 'winner'>
 		<button class = 'reset'>Reset Button</button>
-		<p class = 'winnerIs'></p>
+		<p class = 'modalText' id = "winnerIs"></p>
 	</div>
-		<span class = 'player1'>Player 1</span> <span class = 'player2'> Player 2 (leave blank for AI)</span>
+		<span class = 'player1'>Player 1</span> <span class = 'player2'> Player 2 <span id="q1"class="info">?</span></span>
 		<form class = 'playernames'>
 			<input id='player1'></input>
 			<input id='player2'></input>
 		</form>	
+	<div class = "infobox"><p class = 'modalText' id = 'infoText'></p></div>
+
 	<form class ='sizer'>
 		<input type='radio' name = 'size' id='size_3'>3x3</input>
 		<input type='radio' name = 'size' id='size_4'>4x4</input>

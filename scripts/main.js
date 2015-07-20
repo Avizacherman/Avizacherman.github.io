@@ -1,5 +1,5 @@
 //remaing fixes: dynamic resize of container to shrink size of game
-//remaining features: Save/Load State, score tally, AI difficulty modes
+//remaining features:  score tally, AI difficulty modes
 //Connect 4?
 //NbyK?
 
@@ -50,6 +50,7 @@ Storage = function(arr, turn, players){
 				localStorage.setItem('player1', players[0])
 				localStorage.setItem('player2', players[1])
 				localStorage.setItem('size', arr.length);
+				localStorage.setItem('tieCounter', tieCounter)
 				localStorage.setItem('turn', turn)
 		}
 
@@ -73,6 +74,7 @@ Storage = function(arr, turn, players){
 			}
 			players.push(localStorage.getItem('player1'))
 			players.push(localStorage.getItem('player2'))
+			tieCounter = parseInt(localStorage.getItem('tieCounter'))
 			game = new Game(theGrid.length, players)
 			game.render()
 		}
@@ -175,18 +177,21 @@ function checkWinCondition(arr, toWin){
 var win = checkRows(arr)
 
 if(win[0]){
+	$('.save').toggle();
 	return [true, win[1]]
 }
 
 win = checkColumns(arr)
 
 if(win[0]){
+	$('.save').toggle();
 	return [true, win[1]]
 }
 
 win = checkDiagonal(arr)
 
 if(win[0]){
+	$('.save').toggle();
 	return [true, win[1]]
 
 }
@@ -216,7 +221,7 @@ function computerTurn(arr, toWin){
 			var gridsize=arr.length
 			
 			if(tieCounter===(gridsize*gridsize)){
-										$('.winnerIs').text('ITS A TIE')
+										$('#winnerIs').text('ITS A TIE')
 										$('.winner').toggle();
 										return false;
 										}
@@ -443,8 +448,21 @@ Game = function(gridsize, players, toWin){
 		}
 
 		$save = $('<button>').text('Save').addClass('save').on('click', function(){
-			loader = new Storage(theGrid, turn, players);
+			loader = new Storage(theGrid, turn, players, tieCounter);
 			loader.saveGame();
+			clearTheGrid();
+			firstMove = true;
+			$div = $('<div>')
+			$div.addClass('container');
+			$('body').append($div)
+			$('.buttons').toggle();
+			$('.sizer').toggle();
+			$('.player1').toggle();
+			$('.player2').toggle();
+			$('.playernames').toggle();
+			$('#player1').val('');
+			$('#player2').val('');
+			$('.save').toggle();
 		})
 		$('body').prepend($save)
 		theGrid.forEach(function(element, indexI){
@@ -514,13 +532,13 @@ Game = function(gridsize, players, toWin){
 					if(endGame[0]){
 						switch(endGame[1]){
 							case 'x':
-							$('.winnerIs').text(player1 + ' wins')
+							$('#winnerIs').text(player1 + ' wins')
 							break
 							case 'o':
 								if(player2 === 'AI'){
-							$('.winnerIs').text(computerNames[Math.floor(Math.random()*3)] + ' wins')
+							$('#winnerIs').text(computerNames[Math.floor(Math.random()*3)] + ' wins')
 							} else {
-								$('.winnerIs').text(player2 + ' wins')
+								$('#winnerIs').text(player2 + ' wins')
 							}
 						}
 
@@ -528,7 +546,7 @@ Game = function(gridsize, players, toWin){
 						return false;
 					}
 					if(tieCounter===(gridsize*gridsize)){
-						$('.winnerIs').text('ITS A TIE')
+						$('#winnerIs').text('ITS A TIE')
 						$('.winner').toggle();
 						return false;
 					}
@@ -651,15 +669,20 @@ this.setPlayers = function(){
 
 }
 
-var size = new Size();
-var gamers = new PlayerNames(); 
 
 $(document).ready(function(){
+	$(document).mousemove( function(e){
+		mouseX = e.pageX;
+		mouseY = e.pageY;
+	});
+
 	$start = $('.start');
 	$load = $('.load');
 	$start.on('click', function(){
 		$('.buttons').toggle();
 		
+		var size = new Size();
+		var gamers = new PlayerNames(); 
 		var ticTacToe = new Game(size.set(), gamers.setPlayers());
 
 		ticTacToe.render();
@@ -689,4 +712,14 @@ $(document).ready(function(){
 		ticTacToe.resetButton()
 
 	})
+
+$('#q1').on('mouseenter', function(){
+		$('.infobox').css('top', mouseY).css('left', mouseX).fadeIn('fast', function(){
+			$('#infoText').text("Leave blank for computer opponent")
+		})
+	})
+	$('#q1').on('mouseleave', function(){
+		$('.infobox').fadeOut('fast');
+	})
+
 })
