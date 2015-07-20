@@ -41,10 +41,6 @@ function clearTheGrid(){
 
 Storage = function(arr, turn, players){
 		this.arr = arr;
-		
-		if (typeof(arr) != 'undefined'){
-			this.size = arr.length;
-		}
 		this.turn = turn;
 		this.players = players;
 		this.saveGame = function(){
@@ -54,11 +50,13 @@ Storage = function(arr, turn, players){
 			}
 				localStorage.setItem('player1', players[0])
 				localStorage.setItem('player2', players[1])
-				localStorage.setItem('size', size);
+				localStorage.setItem('size', arr.length);
 		}
 
 		this.loadGame = function(){
 			size = localStorage.getItem('size');
+			size = parseInt(size);
+			players = [];
 			var game = new Game(size)
 			clearTheGrid();
 			$div = $('<div>').addClass('container');
@@ -72,9 +70,8 @@ Storage = function(arr, turn, players){
 				}
 				}
 			}
-			debugger
-			players.push(localStorage.getItem(player1))
-			players.push(localStorage.getItem(player2))
+			players.push(localStorage.getItem('player1'))
+			players.push(localStorage.getItem('player2'))
 			game = new Game(theGrid.length, players)
 			game.render()
 			turn = localStorage.getItem('turn')
@@ -454,8 +451,9 @@ Game = function(gridsize, players, toWin){
 					$div.css('background-image', "url("+randomImage('x')+")")
 				} else if(theGrid[indexI][indexJ] === 'o'){
 					$div.css('background-image', "url("+randomImage('o')+")")
-
 				}
+
+				
 
 					if (indexI===0){
 						$div.addClass('top');
@@ -526,6 +524,8 @@ Game = function(gridsize, players, toWin){
 				})
 			},indexI)
 		})
+	
+	debugger
 	
 	switch(gridsize){
 		case 4:
@@ -649,13 +649,21 @@ $(document).ready(function(){
 		ticTacToe.render();
 		})
 	$load.on('click', function(){
+		$('.buttons').toggle();
+		$('.sizer').toggle();
+		$('.player1').toggle();	
+		$('.player2').toggle();
+		$('.playernames').toggle();
 		var ticTacToe = new Storage()
 		ticTacToe.loadGame();
 	})
 
+
+	$('.clear').on('click', localStorage.clear())
+		
 	$('.reset').on('click', function(){
 		var ticTacToe = new Game();
 		ticTacToe.resetButton()
-		
+
 	})
 })
