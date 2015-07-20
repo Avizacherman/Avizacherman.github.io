@@ -9,7 +9,6 @@ var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png'
 var computerNames = ['Brock Hardbody - AI', 'Rip Johnson - AI', 'Jones McMuscles - AI']
 
 var theGrid =[]
-var turn = 'x'
 var tieCounter=0;
 var firstMove = true;
 
@@ -43,14 +42,15 @@ Storage = function(arr, turn, players){
 		this.arr = arr;
 		this.turn = turn;
 		this.players = players;
+		
 		this.saveGame = function(){
 			for(i = 0; i<arr.length; i++){
 				localStorage.setItem('row'+i, arr[i])
-				localStorage.setItem('turn', turn)
 			}
 				localStorage.setItem('player1', players[0])
 				localStorage.setItem('player2', players[1])
 				localStorage.setItem('size', arr.length);
+				localStorage.setItem('turn', turn)
 		}
 
 		this.loadGame = function(){
@@ -64,9 +64,10 @@ Storage = function(arr, turn, players){
 			for(i = 0; i<size; i++){
 				theGrid.push([])
 				var preArr = localStorage.getItem('row'+i) 
-				for(j = 0; j<size; j++){
+				for(j = 0; j<preArr.length; j++){
 					if(preArr.charAt(j) != ','){
 					theGrid[i].push(preArr.charAt(j));
+					
 				}
 				}
 			}
@@ -74,7 +75,6 @@ Storage = function(arr, turn, players){
 			players.push(localStorage.getItem('player2'))
 			game = new Game(theGrid.length, players)
 			game.render()
-			turn = localStorage.getItem('turn')
 		}
 }
 
@@ -423,7 +423,13 @@ if(arr[arr.length-2][arr.length-2]==='x'){
 
 Game = function(gridsize, players, toWin){
 	this.gridsize = gridsize;
-
+	
+	if(localStorage.getItem('turn')){
+	turn = localStorage.getItem('turn')
+	}
+	else {
+		turn = 'x'
+	}
 
 
 	if(typeof(players) !='undefined'){
@@ -436,7 +442,11 @@ Game = function(gridsize, players, toWin){
 		drawGrid(gridsize)
 		}
 
-
+		$save = $('<button>').text('Save').addClass('save').on('click', function(){
+			loader = new Storage(theGrid, turn, players);
+			loader.saveGame();
+		})
+		$('body').prepend($save)
 		theGrid.forEach(function(element, indexI){
 			
 			theGrid[indexI].forEach(function(element, indexJ, array){				
@@ -460,6 +470,7 @@ Game = function(gridsize, players, toWin){
 					}	else if (indexI===gridsize-1){
 						$div.addClass('bottom');
 					} 
+
 
 				if (indexJ===0){
 						$div.addClass('left')
@@ -525,8 +536,7 @@ Game = function(gridsize, players, toWin){
 			},indexI)
 		})
 	
-	debugger
-	
+
 	switch(gridsize){
 		case 4:
 			$('.box').height('24%').width('24%');
@@ -539,6 +549,7 @@ Game = function(gridsize, players, toWin){
 			break;
 		case 7: 
 			$('.box').height('13%').width('13%');
+			
 			break;
 		case 8:
 			$('.box').height('12%').width('12%');
@@ -559,6 +570,7 @@ Game = function(gridsize, players, toWin){
 	
 	this.resetButton = function(){
 		clearTheGrid();
+		window.localStorage.clear();
 		tieCounter = 0;
 		firstMove = true;
 		$div = $('<div>')
@@ -570,7 +582,14 @@ Game = function(gridsize, players, toWin){
 		$('.player1').toggle();
 		$('.player2').toggle();
 		$('.playernames').toggle();
+		$('#player1').val('');
+		$('#player2').val('');
 	}
+
+	this.clearData = function(){
+		window.localStorage.clear();
+	}
+
 }
 var size = 0;
 
@@ -614,17 +633,14 @@ var Size = function(){
 var PlayerNames = function(){
 	
 this.setPlayers = function(){
-	var opponent1 = $('#player1').val();
-	var opponent2 = $('#player2').val();
+	 opponent1 = $('#player1').val();
+	 opponent2 = $('#player2').val();
 	
 	
 	if(opponent2 === ''){
 
 		opponent2 = 'AI';
 	}	
-	
-	$('#player1').val('');
-	$('#player2').val('');
 
 	$('.player1').toggle();
 	$('.player2').toggle();
@@ -649,6 +665,10 @@ $(document).ready(function(){
 		ticTacToe.render();
 		})
 	$load.on('click', function(){
+			if(!localStorage.getItem('row0')){
+				alert("No save data")
+				return false; }
+
 		$('.buttons').toggle();
 		$('.sizer').toggle();
 		$('.player1').toggle();	
@@ -659,7 +679,10 @@ $(document).ready(function(){
 	})
 
 
-	$('.clear').on('click', localStorage.clear())
+	$('.clear').on('click', function(){
+		var ticTacToe = new Game();
+		ticTacToe.clearData();
+	});
 		
 	$('.reset').on('click', function(){
 		var ticTacToe = new Game();
