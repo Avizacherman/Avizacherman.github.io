@@ -1,6 +1,7 @@
-//remaing bugs: specific pattern due to random trigger
+//remaing fixes: dynamic resize of container to shrink size of game
 //remaining features: Save/Load State, score tally, AI difficulty modes
 //Connect 4?
+//NbyK?
 
 var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/X_mark_18x18_02.svg/2000px-X_mark_18x18_02.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/X_mark.svg/2000px-X_mark.svg.png', 'http://zidilifepullzone.5giants.netdna-cdn.com/wp-content/uploads/2014/09/x_spot_zidi.png', 'http://i.imgur.com/wirqMZa.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/OS_X-Logo.svg/2000px-OS_X-Logo.svg.png', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/X11.svg/275px-X11.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/26/34/x-400.png'], o: ['https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Opera_O.svg/512px-Opera_O.svg.png', 'http://etc.usf.edu/presentations/extras/letters/theme_alphabets/20/25/o-400.png', 'http://etc.usf.edu/presentations/extras/letters/fridge_magnets/red/25/o-300.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INF.jpg', 'http://preschool.uen.org/curriculum/May_s/Letter_O.jpg', 'http://www.wpclipart.com/education/animal_alphabet/animal_alphabet_O.png', 'https://www.westonsigns.com/images/P/WSCL1_O_INFPINK.jpg', 'http://www.really-learn-english.com/image-files/long-o-sound.jpg']};
 
@@ -30,13 +31,57 @@ function randomImage(letter){
 	
 }
 
+
 function clearTheGrid(){
 	theGrid = [];
 	turn = 'x'
 	$('.container').remove();
 }
 
-function checkRows(arr){
+
+Storage = function(arr, turn, players){
+		this.arr = arr;
+		
+		if (typeof(arr) != 'undefined'){
+			this.size = arr.length;
+		}
+		this.turn = turn;
+		this.players = players;
+		this.saveGame = function(){
+			for(i = 0; i<arr.length; i++){
+				localStorage.setItem('row'+i, arr[i])
+				localStorage.setItem('turn', turn)
+			}
+				localStorage.setItem('player1', players[0])
+				localStorage.setItem('player2', players[1])
+				localStorage.setItem('size', size);
+		}
+
+		this.loadGame = function(){
+			size = localStorage.getItem('size');
+			var game = new Game(size)
+			clearTheGrid();
+			$div = $('<div>').addClass('container');
+			$('body').append($div);
+			for(i = 0; i<size; i++){
+				theGrid.push([])
+				var preArr = localStorage.getItem('row'+i) 
+				for(j = 0; j<size; j++){
+					if(preArr.charAt(j) != ','){
+					theGrid[i].push(preArr.charAt(j));
+				}
+				}
+			}
+			debugger
+			players.push(localStorage.getItem(player1))
+			players.push(localStorage.getItem(player2))
+			game = new Game(theGrid.length, players)
+			game.render()
+			turn = localStorage.getItem('turn')
+		}
+}
+
+function checkRows(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
 	for(var i = 0; i < arr.length; i++){
@@ -60,7 +105,7 @@ function checkRows(arr){
 	return false;
 }
 
-function checkColumns(arr){
+function checkColumns(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
 	var column = 0;
@@ -86,7 +131,7 @@ function checkColumns(arr){
 	return false;
 }
 
-function checkDiagonal(arr){
+function checkDiagonal(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
 	var angle = 0;
@@ -119,6 +164,7 @@ function lightUp(source, placement, arr){
 		case 'row':
 			for(i=0; i< arr.length; i++ ){
 				$('#r'+placement+'c'+i).css('border-width', '2px').css('border-color', 'red');
+				break;
 			}
 		case 'column':
 				for(i=0; i< arr.length; i++ ){
@@ -127,7 +173,7 @@ function lightUp(source, placement, arr){
 	}
 }
 
-function checkWinCondition(arr){
+function checkWinCondition(arr, toWin){
 
 var win = checkRows(arr)
 
@@ -169,7 +215,7 @@ function randomComputerMove(arr){
 
 }
 
-function computerTurn(arr){
+function computerTurn(arr, toWin){
 			var gridsize=arr.length
 			
 			if(tieCounter===(gridsize*gridsize)){
@@ -378,8 +424,9 @@ if(arr[arr.length-2][arr.length-2]==='x'){
 
 }
 
-Game = function(gridsize, players){
+Game = function(gridsize, players, toWin){
 	this.gridsize = gridsize;
+
 
 
 	if(typeof(players) !='undefined'){
@@ -387,9 +434,10 @@ Game = function(gridsize, players){
 	var player2 = players[1];	
 	}
 	
-
 	this.render = function(){
+		if(theGrid.length === 0 ){
 		drawGrid(gridsize)
+		}
 
 
 		theGrid.forEach(function(element, indexI){
@@ -401,8 +449,12 @@ Game = function(gridsize, players){
 				$div.addClass('box').attr('id','r'+indexI+'c'+indexJ);
 							$('.container').append($div);
 
-				if(indexJ ===0){
-					
+			
+				if(theGrid[indexI][indexJ]==='x'){
+					$div.css('background-image', "url("+randomImage('x')+")")
+				} else if(theGrid[indexI][indexJ] === 'o'){
+					$div.css('background-image', "url("+randomImage('o')+")")
+
 				}
 
 					if (indexI===0){
@@ -475,15 +527,32 @@ Game = function(gridsize, players){
 			},indexI)
 		})
 	
-	
-	if(gridsize === 4){
-	$('.box').height('24%').width('24%');
-	}
-	
-	if(gridsize === 5){
-	$('.box').height('18%').width('18%');
-	}
+	switch(gridsize){
+		case 4:
+			$('.box').height('24%').width('24%');
+			break;
+		case 5:	
+			$('.box').height('18%').width('18%');
+			break;
+		case 6:
+			$('.box').height('14%').width('14%');
+			break;
+		case 7: 
+			$('.box').height('13%').width('13%');
+			break;
+		case 8:
+			$('.box').height('12%').width('12%');
+			break;
+		case 9:
+			$('.box').height('10%').width('10%');
+			break;
+		case 10:
+			$('.box').height('9%').width('9%');
+			break;
+		default: 
+			$('.box').height('30%').width('30%');
 
+		}
 
 
 	}
@@ -496,7 +565,7 @@ Game = function(gridsize, players){
 		$div.addClass('container');
 		$('body').append($div)
 		$('.winner').toggle();
-		$('.start').toggle();
+		$('.buttons').toggle();
 		$('.sizer').toggle();
 		$('.player1').toggle();
 		$('.player2').toggle();
@@ -517,6 +586,21 @@ var Size = function(){
 			} else if($('#size_5').is(':checked')){
 				$('.sizer').toggle();
 				return 5;
+			} else if($('#size_6').is(':checked')){
+				$('.sizer').toggle();
+				return 6; 
+			} else if($('#size_7').is(':checked')){
+				$('.sizer').toggle();
+				return 7; 
+			} else if($('#size_8').is(':checked')){
+				$('.sizer').toggle();
+				return 8; 
+			} else if($('#size_9').is(':checked')){
+				$('.sizer').toggle();
+				return 9; 
+			} else if($('#size_10').is(':checked')){
+				$('.sizer').toggle();
+				return 10; 
 			} else {
 				$('.sizer').toggle();
 				return 3;
@@ -524,6 +608,8 @@ var Size = function(){
 			}
 	}
 }
+
+
 
 var PlayerNames = function(){
 	
@@ -554,13 +640,18 @@ var gamers = new PlayerNames();
 
 $(document).ready(function(){
 	$start = $('.start');
+	$load = $('.load');
 	$start.on('click', function(){
-		$start.toggle();
+		$('.buttons').toggle();
 		
 		var ticTacToe = new Game(size.set(), gamers.setPlayers());
 
 		ticTacToe.render();
 		})
+	$load.on('click', function(){
+		var ticTacToe = new Storage()
+		ticTacToe.loadGame();
+	})
 
 	$('.reset').on('click', function(){
 		var ticTacToe = new Game();

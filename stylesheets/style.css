@@ -1,10 +1,11 @@
 .container {
-	width: 850px;
+	width: 890px;
+
 }
 
 .box{
-	height: 30%;
-	width: 30%;
+	height: 10%;
+	width: 10%;
 	text-align: center;
 	vertical-align: middle;
 	display: inline-block;
@@ -62,10 +63,10 @@
 	top: 40%;
 	left: 45%;
 }
-.start{
+.buttons{
 	position: absolute;
-	top: 45%;
-	left: 45%;
+	top: 63%;
+	left: 35%;
 }
 
 .player1 {

@@ -4,31 +4,40 @@
 	<meta charset="UTF-8">
 	<title>Tic Tac Toe</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
-<!-- 	<link rel="stylesheet" href="../../offline_code/skeleton.css">	
- -->	<link rel="stylesheet" href="stylesheets/style.css">
+	<link rel="stylesheet" href="../../offline_code/skeleton.css">	
+	<link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
 	<div class = 'winner'>
 		<button class = 'reset'>Reset Button</button>
 		<p class = 'winnerIs'></p>
 	</div>
-		<span class = 'player1'>Player 1</span> <span class = 'player2'> Player 2 </span>
+		<span class = 'player1'>Player 1</span> <span class = 'player2'> Player 2 (leave blank for AI)</span>
 		<form class = 'playernames'>
 			<input id='player1'></input>
 			<input id='player2'></input>
-		</form>
+		</form>	
 	<form class ='sizer'>
 		<input type='radio' name = 'size' id='size_3'>3x3</input>
 		<input type='radio' name = 'size' id='size_4'>4x4</input>
 		<input type='radio' name = 'size' id='size_5'>5x5</input>
+		<br/>
+		<input type='radio' name = 'size' id='size_6'>6x6</input>
+		<input type='radio' name = 'size' id='size_7'>7x7</input>
+		<input type='radio' name = 'size' id='size_8'>8x8</input>
+		<br/>
+		<input type='radio' name = 'size' id='size_9'>9x9</input>
+		<input type='radio' name = 'size' id='size_10'>10x10</input>		
 	</form>	
-	<button class='start'>Start Game</button>
-
+	<span class ='buttons'>
+		<button class='start'>Start Game</button>
+		<button class='load'>Load Game</button>
+		<button class='clear'>Clear Saved Game</button>
+	</span>
 	<div class = 'container'>
 	</div>
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<!--  <script src="../../offline_code/jquery-2.1.4.min.js"></script> -->
-
+	 <script src="../../offline_code/jquery-2.1.4.min.js"></script>
 	<script src="scripts/main.js"></script>
 </body>
 </html>
