@@ -465,7 +465,9 @@ function computerTurn(arr, difficulty){
 
 Game = function(gridsize, players, fresh){
 	this.gridsize = gridsize; 		//sets size of grid
-	
+	noMoreClicks = false;
+
+
 	//determines if the start game or load game function was pressed
 	if(!fresh){
 	turn = localStorage.getItem('turn')
@@ -564,6 +566,26 @@ Game = function(gridsize, players, fresh){
 
 					} 
 					
+					endGame = checkWinCondition(theGrid)
+					//checks for end condition, spits out the winner in the winner modal and generates a random name for the computer
+					if(endGame[0]){
+						noMoreClicks = true;
+						switch(endGame[1]){
+							case 'x':
+							$('#winnerIs').text(player1 + ' wins')
+							break
+							case 'o':
+								if(player2 === 'AI'){
+							$('#winnerIs').text(computerNames[Math.floor(Math.random()*3)] + ' wins')
+							} else {
+								$('#winnerIs').text(player2 + ' wins')
+							}
+						}
+
+						$('.winner').toggle();
+						return false;
+					}
+
 					//computer gameplay function
 					 if((player2==='AI' || player2==='Easy AI' || player2==='Hard AI')&& turn === 'o'){
 								switch(player2){
