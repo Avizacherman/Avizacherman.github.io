@@ -241,7 +241,7 @@ function randomComputerMove(arr){
 
 
 //main AI game logic 
-function computerTurn(arr){
+function computerTurn(arr, difficulty){
 			var gridsize=arr.length
 			
 			if(tieCounter===(gridsize*gridsize)){
@@ -250,203 +250,212 @@ function computerTurn(arr){
 										return false;
 										}
 
-	//checks to see if the computer can make a winning move
-		var xCount = 0;
-		var oCount = 0; 
-		for(var i = arr.length-1; i >= 0; i--){
-			xCount = 0;
-			oCount = 0;
-		if(i===arr.length-1 || i === 0){
-		for(var j = 0; j < arr.length; j++){
-			if(arr[Math.abs(i-j)][j]==='o'){
-				oCount++
-				}
-				if (oCount === arr.length-1){
-					for(var k = arr.length-1; i >= 0; i--){
-						if(i===arr.length-1 || i === 0){
-							for(var l = 0; j < arr[k].length; j++){
-									if(arr[Math.abs(k-l)][l]==='s'){
-										arr[Math.abs(k-l)][l]='o'
-										return [Math.abs(k-l),l];
-										}
-									} 
+		switch(difficulty){
+			case 'regular':
+		//creates a 1 in 14 chance that the computer plays at random (so it's not perfect)
+		if(Math.floor(Math.random()*100)%6 === 0){
+			var rando = randomComputerMove(arr)
+			return rando;
+		}
+
+		case 'hard':
+			//checks to see if the computer can make a winning move
+			var xCount = 0;
+			var oCount = 0; 
+			for(var i = arr.length-1; i >= 0; i--){
+				xCount = 0;
+				oCount = 0;
+			if(i===arr.length-1 || i === 0){
+			for(var j = 0; j < arr.length; j++){
+				if(arr[Math.abs(i-j)][j]==='o'){
+					oCount++
+					}
+					if (oCount === arr.length-1){
+						for(var k = arr.length-1; i >= 0; i--){
+							if(i===arr.length-1 || i === 0){
+								for(var l = 0; j < arr[k].length; j++){
+										if(arr[Math.abs(k-l)][l]==='s'){
+											arr[Math.abs(k-l)][l]='o'
+											return [Math.abs(k-l),l];
+											}
+										} 
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-	for(var i = 0; i < arr.length; i++){
-		xCount = 0;
-		oCount = 0;
-	for(var j = 0; j < arr.length; j++){
-		if(arr[i][j]==='o'){
-			oCount++
-			if(oCount===arr.length-1){
-				var oCountRow = i;
-			}
-			}
-				if (oCount === arr.length-1){
-
-					for(var l = 0; l < arr.length;  l++){
-						if(arr[oCountRow][l]==='s'){
-							arr[oCountRow][l]='o'
-							return [oCountRow,l];
-					}
-				}	
-			}
-		}
-	}
 		for(var i = 0; i < arr.length; i++){
-		xCount = 0;
-		oCount = 0;
-	for(var j = 0; j < arr.length; j++){
-		if(arr[j][i]==='o'){
-			oCount++
-			if(oCount===arr.length-1){
-			var	oCountColumn = i;
-			}
-			}
-			if (oCount === arr.length-1){
-				for(var l = 0; l < arr.length;  l++){
-					if(arr[l][oCountColumn]==='s'){
-						arr[l][oCountColumn]='o'
-						return [l,oCountColumn];
-					}
-				}	
+			xCount = 0;
+			oCount = 0;
+		for(var j = 0; j < arr.length; j++){
+			if(arr[i][j]==='o'){
+				oCount++
+				if(oCount===arr.length-1){
+					var oCountRow = i;
+				}
+				}
+					if (oCount === arr.length-1){
+
+						for(var l = 0; l < arr.length;  l++){
+							if(arr[oCountRow][l]==='s'){
+								arr[oCountRow][l]='o'
+								return [oCountRow,l];
+						}
+					}	
+				}
 			}
 		}
-	}
-	//checks to see if the player is about to make a winning move and blocks
+			for(var i = 0; i < arr.length; i++){
+			xCount = 0;
+			oCount = 0;
+		for(var j = 0; j < arr.length; j++){
+			if(arr[j][i]==='o'){
+				oCount++
+				if(oCount===arr.length-1){
+				var	oCountColumn = i;
+				}
+				}
+				if (oCount === arr.length-1){
+					for(var l = 0; l < arr.length;  l++){
+						if(arr[l][oCountColumn]==='s'){
+							arr[l][oCountColumn]='o'
+							return [l,oCountColumn];
+						}
+					}	
+				}
+			}
+		}
+		//checks to see if the player is about to make a winning move and blocks
+			for(var i = arr.length-1; i >= 0; i--){
+				xCount = 0;
+				oCount = 0;
+			if(i===arr.length-1 || i === 0){
+			for(var j = 0; j < arr.length; j++){
+				if(arr[Math.abs(i-j)][j]==='x'){
+					xCount++
+
+					}
+					if (xCount === arr.length-1){
+						for(var k = arr.length-1; i >= 0; i--){
+							if(i===arr.length-1 || i === 0){
+								for(var l = 0; j < arr[k].length; j++){
+										if(arr[Math.abs(k-l)][l]==='s'){
+											arr[Math.abs(k-l)][l]='o'
+											return [Math.abs(k-l),l];
+											}
+										} 
+							}
+						}
+					}
+				}
+			}
+		}
+		for(var i = 0; i < arr.length; i++){
+			xCount = 0;
+			oCount = 0;
+		for(var j = 0; j < arr.length; j++){
+			if(arr[i][j]==='x'){
+				xCount++
+				if(xCount===arr.length-1){
+				var	xCountRow = i;
+				}
+				}
+					if (xCount === arr.length-1){
+						for(var l = 0; l < arr.length;  l++){
+							if(arr[xCountRow][l]==='s'){
+								arr[xCountRow][l]='o'
+								return [xCountRow,l];
+						}
+					}	
+				}
+			}
+		}
+			for(var i = 0; i < arr.length; i++){
+			xCount = 0;
+			oCount = 0;
+		for(var j = 0; j < arr.length; j++){
+			if(arr[j][i]==='x'){
+				xCount++
+				if(xCount===arr.length-1){
+				var	xCountColumn = i;
+				}
+				}
+				if (xCount === arr.length-1){
+					for(var l = 0; l < arr.length;  l++){
+						if(arr[l][xCountColumn]==='s'){
+							arr[l][xCountColumn]='o'
+							return [l,xCountColumn];
+						}
+					}	
+				}
+			}
+		}
+
+		//moves first to be diagonally opposite of X if X is not in the middle, otherwise goes to an empty corner if possible
+
 		for(var i = arr.length-1; i >= 0; i--){
 			xCount = 0;
 			oCount = 0;
 		if(i===arr.length-1 || i === 0){
 		for(var j = 0; j < arr.length; j++){
 			if(arr[Math.abs(i-j)][j]==='x'){
-				xCount++
+				xCountRow=Math.abs(i-j);
+				xCountColumn=j;
 
+				if(arr[Math.abs(xCountRow-(arr.length-1))][Math.abs(xCountColumn-(arr.length-1))]==='s'){
+					if(firstMove){	
+					firstMove=false;	
+					return [Math.abs(xCountRow-(arr.length-1)), Math.abs(xCountColumn-(arr.length-1))]
+					}
 				}
-				if (xCount === arr.length-1){
-					for(var k = arr.length-1; i >= 0; i--){
-						if(i===arr.length-1 || i === 0){
-							for(var l = 0; j < arr[k].length; j++){
-									if(arr[Math.abs(k-l)][l]==='s'){
-										arr[Math.abs(k-l)][l]='o'
-										return [Math.abs(k-l),l];
-										}
-									} 
+				for(var k = arr.length-1; k >= 0; k--){
+					if(k===arr.length-1 || k === 0){
+						
+						for(var l = 0; l < arr[k].length; l++){
+								if(arr[Math.abs(k-l)][l]==='s' && k != l){
+									
+									arr[Math.abs(k-l)][l]='o'
+									return [Math.abs(k-l),l];
+									}
+								} 
 						}
 					}
 				}
 			}
 		}
 	}
-	for(var i = 0; i < arr.length; i++){
-		xCount = 0;
-		oCount = 0;
-	for(var j = 0; j < arr.length; j++){
-		if(arr[i][j]==='x'){
-			xCount++
-			if(xCount===arr.length-1){
-			var	xCountRow = i;
-			}
-			}
-				if (xCount === arr.length-1){
-					for(var l = 0; l < arr.length;  l++){
-						if(arr[xCountRow][l]==='s'){
-							arr[xCountRow][l]='o'
-							return [xCountRow,l];
-					}
-				}	
-			}
-		}
-	}
-		for(var i = 0; i < arr.length; i++){
-		xCount = 0;
-		oCount = 0;
-	for(var j = 0; j < arr.length; j++){
-		if(arr[j][i]==='x'){
-			xCount++
-			if(xCount===arr.length-1){
-			var	xCountColumn = i;
-			}
-			}
-			if (xCount === arr.length-1){
-				for(var l = 0; l < arr.length;  l++){
-					if(arr[l][xCountColumn]==='s'){
-						arr[l][xCountColumn]='o'
-						return [l,xCountColumn];
-					}
-				}	
-			}
-		}
-	}
 
-	//moves first to be diagonally opposite of X if X is not in the middle, otherwise goes to an empty corner if possible
+	//if X has taken the middle moves to an empty corner, may be extra code but requires further testing to determine
+	// if(arr[arr.length-2][arr.length-2]==='x'){
+	// 	for(var k = arr.length-1; k >= 0; k--){
+	// 				if(k===arr.length-1 || k === 0){
+						
+	// 					for(var l = 0; l < arr[k].length; l++){
+	// 							if(arr[Math.abs(k-l)][l]==='s' && k != l){
+									
+	// 								arr[Math.abs(k-l)][l]='o'
+	// 								return [Math.abs(k-l),l];
+	// 							}
+	// 						} 
+	// 					}
+	// 				}
+	// 			}
 
-	for(var i = arr.length-1; i >= 0; i--){
-		xCount = 0;
-		oCount = 0;
-	if(i===arr.length-1 || i === 0){
-	for(var j = 0; j < arr.length; j++){
-		if(arr[Math.abs(i-j)][j]==='x'){
-			xCountRow=Math.abs(i-j);
-			xCountColumn=j;
 
-			if(arr[Math.abs(xCountRow-(arr.length-1))][Math.abs(xCountColumn-(arr.length-1))]==='s'){
-				if(firstMove){	
-				firstMove=false;	
-				return [Math.abs(xCountRow-(arr.length-1)), Math.abs(xCountColumn-(arr.length-1))]
-				}
-			}
-			for(var k = arr.length-1; k >= 0; k--){
-				if(k===arr.length-1 || k === 0){
-					
-					for(var l = 0; l < arr[k].length; l++){
-							if(arr[Math.abs(k-l)][l]==='s' && k != l){
-								
-								arr[Math.abs(k-l)][l]='o'
-								return [Math.abs(k-l),l];
-								}
-							} 
-					}
-				}
-			}
+		//if no corners are available and the middle still is, takes the middle
+		if(arr[arr.length-2][arr.length-2]==='s')
+		{
+			arr[arr.length-2][arr.length-2]==='o'		
+			return[arr.length-2,arr.length-2]
 		}
-	}
+
+	//find only available (at Random)
+		case 'easy':
+			rando = randomComputerMove(arr)
+			return rando;
+		
 }
-
-//if X has taken the middle moves to an empty corner, may be extra code but requires further testing to determine
-// if(arr[arr.length-2][arr.length-2]==='x'){
-// 	for(var k = arr.length-1; k >= 0; k--){
-// 				if(k===arr.length-1 || k === 0){
-					
-// 					for(var l = 0; l < arr[k].length; l++){
-// 							if(arr[Math.abs(k-l)][l]==='s' && k != l){
-								
-// 								arr[Math.abs(k-l)][l]='o'
-// 								return [Math.abs(k-l),l];
-// 							}
-// 						} 
-// 					}
-// 				}
-// 			}
-
-
-	//if no corners are available and the middle still is, takes the middle
-	if(arr[arr.length-2][arr.length-2]==='s')
-	{
-		arr[arr.length-2][arr.length-2]==='o'		
-		return[arr.length-2,arr.length-2]
-	}
-//find only available (at Random)
-	var rando = randomComputerMove(arr)
-
-		return rando;
-	
-
-
 }
 
 //main game constructor
@@ -551,11 +560,20 @@ Game = function(gridsize, players, fresh){
 							tieCounter++
 
 					} 
-
+					
 					//computer gameplay function
-					 if(player2==='AI' && turn === 'o'){
-								whereToPlace = computerTurn(theGrid)
-								if(!whereToPlace){return false}
+					 if((player2==='AI' || player2==='Easy AI' || player2==='Hard AI')&& turn === 'o'){
+								switch(player2){
+									case 'AI':
+										whereToPlace = computerTurn(theGrid, 'regular')
+										break;
+									case 'Hard AI':
+										whereToPlace = computerTurn(theGrid, 'hard')
+										break;
+									case 'Easy AI':
+										whereToPlace = computerTurn(theGrid, 'easy')
+								}
+								if(!whereToPlace){return false} //if the computer doesn't take a turn
 								$compDiv = $('#r'+whereToPlace[0]+'c'+whereToPlace[1])
 								theGrid[whereToPlace[0]][whereToPlace[1]] = 'o';
 								$compDiv.css('background-image', "url("+randomImage('o')+")")	
@@ -695,9 +713,12 @@ this.setPlayers = function(){
 	
 	
 	if(opponent2 === ''){
-
 		opponent2 = 'AI';
-	}	
+	}	else if (opponent2.toLowerCase() === 'rake me over the coals mode'){
+		opponent2 = 'Hard AI';
+	} else if (opponent2.toLowerCase() === 'weeny sauce mode'){
+		opponent2 = 'Easy AI';
+	}
 
 	$('.player1').toggle();
 	$('.player2').toggle();
@@ -762,7 +783,11 @@ $(document).ready(function(){
 //info box on player 2
 $('#q1').on('mouseenter', function(){
 		$('.infobox').css('top', mouseY).css('left', mouseX).fadeIn('fast', function(){
-			$('#infoText').text("Leave blank for computer opponent")
+			$infoText = $('#infoText')
+			$infoText.text("Leave blank for regular computer opponent")
+			$p1 = $('<p>').text('Enter "rake me over the coals mode" for hard computer opponent')
+			$p2 = $('<p>').text('Enter "weeny sauce mode" for an easy computer opponent')
+			$infoText.append($p1).append($p2)
 		})
 	})
 	$('#q1').on('mouseleave', function(){
