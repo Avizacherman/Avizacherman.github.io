@@ -7,8 +7,8 @@ var imageBank = {x: ['http://www.clipartbest.com/cliparts/ncX/By4/ncXBy4Kri.png'
 
 
 var computerNames = ['Brock Hardbody - AI', 'Rip Johnson - AI', 'Jones McMuscles - AI']
-
-var theGrid =[]
+var noMoreClicks = false;
+var theGrid =[];
 var tieCounter=0;
 var firstMove = true;
 
@@ -244,11 +244,7 @@ function randomComputerMove(arr){
 function computerTurn(arr, difficulty){
 			var gridsize=arr.length
 			
-			if(tieCounter===(gridsize*gridsize)){
-										$('#winnerIs').text('ITS A TIE')
-										$('.winner').toggle();
-										return false;
-										}
+
 
 		switch(difficulty){
 			case 'regular':
@@ -424,6 +420,13 @@ function computerTurn(arr, difficulty){
 				}
 			}
 		}
+			if(tieCounter===(gridsize*gridsize)){
+										$('#winnerIs').text('ITS A TIE')
+										$('.winner').toggle();
+										noMoreClicks = true;
+										return false;
+										}
+
 	}
 
 	//if X has taken the middle moves to an empty corner, may be extra code but requires further testing to determine
@@ -541,7 +544,7 @@ Game = function(gridsize, players, fresh){
 					//main gameplay function, on click event sets random images and updates the array
 				$div.on('click', function(){
 					$div = ($(this));
-					
+					if(noMoreClicks){return false;}
 
 					 if(theGrid[indexI][indexJ]==='s'){
 						
@@ -584,6 +587,7 @@ Game = function(gridsize, players, fresh){
 					endGame = checkWinCondition(theGrid)
 					//checks for end condition, spits out the winner in the winner modal and generates a random name for the computer
 					if(endGame[0]){
+						noMoreClicks = true;
 						switch(endGame[1]){
 							case 'x':
 							$('#winnerIs').text(player1 + ' wins')
@@ -603,6 +607,7 @@ Game = function(gridsize, players, fresh){
 					if(tieCounter===(gridsize*gridsize)){
 						$('#winnerIs').text('ITS A TIE')
 						$('.winner').toggle();
+						noMoreClicks = true;
 						return false;
 					}
 				})
