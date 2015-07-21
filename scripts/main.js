@@ -220,6 +220,7 @@ return false;
 
 }
 
+//generates a random move
 function randomComputerMove(arr){
 	var row = Math.floor(Math.random()*arr.length)
 	var col = Math.floor(Math.random()*arr.length)
@@ -238,6 +239,8 @@ function randomComputerMove(arr){
 
 }
 
+
+//main AI game logic 
 function computerTurn(arr){
 			var gridsize=arr.length
 			
@@ -247,7 +250,7 @@ function computerTurn(arr){
 										return false;
 										}
 
-	//wins
+	//checks to see if the computer can make a winning move
 		var xCount = 0;
 		var oCount = 0; 
 		for(var i = arr.length-1; i >= 0; i--){
@@ -314,7 +317,7 @@ function computerTurn(arr){
 			}
 		}
 	}
-	//block
+	//checks to see if the player is about to make a winning move and blocks
 		for(var i = arr.length-1; i >= 0; i--){
 			xCount = 0;
 			oCount = 0;
@@ -380,8 +383,7 @@ function computerTurn(arr){
 		}
 	}
 
-	//first move diagonal doesn't factor in with X is middle
-	//corner
+	//moves first to be diagonally opposite of X if X is not in the middle, otherwise goes to an empty corner if possible
 
 	for(var i = arr.length-1; i >= 0; i--){
 		xCount = 0;
@@ -415,24 +417,24 @@ function computerTurn(arr){
 	}
 }
 
-//x is middle go for corner
-if(arr[arr.length-2][arr.length-2]==='x'){
-	for(var k = arr.length-1; k >= 0; k--){
-				if(k===arr.length-1 || k === 0){
+//if X has taken the middle moves to an empty corner, may be extra code but requires further testing to determine
+// if(arr[arr.length-2][arr.length-2]==='x'){
+// 	for(var k = arr.length-1; k >= 0; k--){
+// 				if(k===arr.length-1 || k === 0){
 					
-					for(var l = 0; l < arr[k].length; l++){
-							if(arr[Math.abs(k-l)][l]==='s' && k != l){
+// 					for(var l = 0; l < arr[k].length; l++){
+// 							if(arr[Math.abs(k-l)][l]==='s' && k != l){
 								
-								arr[Math.abs(k-l)][l]='o'
-								return [Math.abs(k-l),l];
-							}
-						} 
-					}
-				}
-			}
+// 								arr[Math.abs(k-l)][l]='o'
+// 								return [Math.abs(k-l),l];
+// 							}
+// 						} 
+// 					}
+// 				}
+// 			}
 
 
-	//middle 
+	//if no corners are available and the middle still is, takes the middle
 	if(arr[arr.length-2][arr.length-2]==='s')
 	{
 		arr[arr.length-2][arr.length-2]==='o'		
@@ -447,27 +449,35 @@ if(arr[arr.length-2][arr.length-2]==='x'){
 
 }
 
-Game = function(gridsize, players, toWin){
-	this.gridsize = gridsize;
+//main game constructor
+
+Game = function(gridsize, players, fresh){
+	this.gridsize = gridsize; 		//sets size of grid
 	
-	if(localStorage.getItem('turn')){
+	//determines if the start game or load game function was pressed
+	if(!fresh){
 	turn = localStorage.getItem('turn')
 	}
 	else {
 		turn = 'x'
 	}
 
-
+	//sets players, as long as the function wasn't called by the load process
 	if(typeof(players) !='undefined'){
 	var player1 = players[0];
 	var player2 = players[1];	
 	}
 	
+
+	//main game build and play function
 	this.render = function(){
+
+		//only creates a new grid if the grid doesn't already exist (namely through loading a saved game)
 		if(theGrid.length === 0 ){
 		drawGrid(gridsize)
 		}
 
+		//builds the save button
 		$save = $('<button>').text('Save').addClass('save').on('click', function(){
 			loader = new Storage(theGrid, turn, players, tieCounter);
 			loader.saveGame();
@@ -486,16 +496,19 @@ Game = function(gridsize, players, toWin){
 			$('.save').remove();
 		})
 		$('body').prepend($save)
+		
+		//nested forEach function to create each div
 		theGrid.forEach(function(element, indexI){
 			
 			theGrid[indexI].forEach(function(element, indexJ, array){				
+				//takes the index position from the previous forEach and passes it as an integer
 				indexI = parseInt(this);
-				
+				//creates each div and gives it an id corresponding to it's row and column
 				$div = $('<div>');
 				$div.addClass('box').attr('id','r'+indexI+'c'+indexJ);
 							$('.container').append($div);
 
-			
+				//fills in pre-existing Xs and Os (usually only if the Grid was reloaded)
 				if(theGrid[indexI][indexJ]==='x'){
 					$div.css('background-image', "url("+randomImage('x')+")")
 				} else if(theGrid[indexI][indexJ] === 'o'){
@@ -503,7 +516,7 @@ Game = function(gridsize, players, toWin){
 				}
 
 				
-
+				//modifies borders to look like a tic-tac-toe board
 					if (indexI===0){
 						$div.addClass('top');
 					}	else if (indexI===gridsize-1){
@@ -516,7 +529,7 @@ Game = function(gridsize, players, toWin){
 					} else if (indexJ===gridsize-1){
 						$div.addClass('right')
 					}
-					
+					//main gameplay function, on click event sets random images and updates the array
 				$div.on('click', function(){
 					$div = ($(this));
 					
@@ -538,6 +551,8 @@ Game = function(gridsize, players, toWin){
 							tieCounter++
 
 					} 
+
+					//computer gameplay function
 					 if(player2==='AI' && turn === 'o'){
 								whereToPlace = computerTurn(theGrid)
 								if(!whereToPlace){return false}
@@ -549,7 +564,7 @@ Game = function(gridsize, players, toWin){
 
 							}
 					endGame = checkWinCondition(theGrid)
-
+					//checks for end condition, spits out the winner in the winner modal and generates a random name for the computer
 					if(endGame[0]){
 						switch(endGame[1]){
 							case 'x':
@@ -566,6 +581,7 @@ Game = function(gridsize, players, toWin){
 						$('.winner').toggle();
 						return false;
 					}
+					//determines if there is a tie condition
 					if(tieCounter===(gridsize*gridsize)){
 						$('#winnerIs').text('ITS A TIE')
 						$('.winner').toggle();
@@ -575,7 +591,7 @@ Game = function(gridsize, players, toWin){
 			},indexI)
 		})
 	
-
+	//rescales divs for higher sized boards
 	switch(gridsize){
 		case 4:
 			$('.box').height('24%').width('24%');
@@ -606,7 +622,7 @@ Game = function(gridsize, players, toWin){
 
 
 	}
-	
+	//reset button fucntion to set everything back to square one
 	this.resetButton = function(){
 		clearTheGrid();
 		window.localStorage.clear();
@@ -625,6 +641,7 @@ Game = function(gridsize, players, toWin){
 		$('#player2').val('');
 	}
 
+	//clears local storage
 	this.clearData = function(){
 		window.localStorage.clear();
 	}
@@ -632,6 +649,7 @@ Game = function(gridsize, players, toWin){
 }
 var size = 0;
 
+//sets grid size
 var Size = function(){
 	this.set = function(){
 			if($('#size_3').is(':checked')){
@@ -668,7 +686,7 @@ var Size = function(){
 }
 
 
-
+//determins player names constructor
 var PlayerNames = function(){
 	
 this.setPlayers = function(){
@@ -692,22 +710,29 @@ this.setPlayers = function(){
 
 
 $(document).ready(function(){
+
+	//keeps track of mouse coordinates
 	$(document).mousemove( function(e){
 		mouseX = e.pageX;
 		mouseY = e.pageY;
 	});
 
+	//grabs buttons
 	$start = $('.start');
 	$load = $('.load');
+
+	//starts a new game
 	$start.on('click', function(){
 		$('.buttons').toggle();
 		
 		var size = new Size();
 		var gamers = new PlayerNames(); 
-		var ticTacToe = new Game(size.set(), gamers.setPlayers());
+		var ticTacToe = new Game(size.set(), gamers.setPlayers(), true);
 
 		ticTacToe.render();
 		})
+
+	//reloads saved game
 	$load.on('click', function(){
 			if(!localStorage.getItem('row0')){
 				alert("No save data")
@@ -727,13 +752,14 @@ $(document).ready(function(){
 		var ticTacToe = new Game();
 		ticTacToe.clearData();
 	});
-		
+	//reset button
 	$('.reset').on('click', function(){
 		var ticTacToe = new Game();
 		ticTacToe.resetButton()
 
 	})
 
+//info box on player 2
 $('#q1').on('mouseenter', function(){
 		$('.infobox').css('top', mouseY).css('left', mouseX).fadeIn('fast', function(){
 			$('#infoText').text("Leave blank for computer opponent")
