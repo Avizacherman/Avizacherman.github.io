@@ -615,7 +615,7 @@ Game = function(gridsize, players, fresh){
 							$('#winnerIs').text(player1 + ' wins')
 							break
 							case 'o':
-								if(player2 === 'AI'){
+								if(player2 === 'AI' || player2 === 'Hard AI' || player2 == "Easy AI"){
 							$('#winnerIs').text(computerNames[Math.floor(Math.random()*3)] + ' wins')
 							} else {
 								$('#winnerIs').text(player2 + ' wins')
@@ -777,7 +777,6 @@ $(document).ready(function(){
 		var size = new Size();
 		var gamers = new PlayerNames(); 
 		var ticTacToe = new Game(size.set(), gamers.setPlayers(), true);
-
 		ticTacToe.render();
 		})
 
