@@ -78,7 +78,7 @@ Storage = function(arr, turn, players){
 			players.push(localStorage.getItem('player1'))
 			players.push(localStorage.getItem('player2'))
 			tieCounter = parseInt(localStorage.getItem('tieCounter'))
-			game = new Game(theGrid.length, players)
+			game = new Game(theGrid.length, players, false)
 			game.render()
 		}
 }
@@ -252,8 +252,8 @@ function computerTurn(arr, difficulty){
 
 		switch(difficulty){
 			case 'regular':
-		//creates a 1 in 14 chance that the computer plays at random (so it's not perfect)
-		if(Math.floor(Math.random()*100)%6 === 0){
+		//creates a 1 in 7 chance that the computer plays at random (so it's not perfect)
+		if(Math.floor(Math.random()*100)%3 === 0){
 			var rando = randomComputerMove(arr)
 			return rando;
 		}
@@ -650,6 +650,7 @@ Game = function(gridsize, players, fresh){
 		$div.addClass('container');
 		$('body').append($div)
 		$('.winner').toggle();
+		$('.save').remove();
 		$('.buttons').toggle();
 		$('.sizer').toggle();
 		$('.player1').toggle();
