@@ -12,6 +12,7 @@ var theGrid =[]
 var tieCounter=0;
 var firstMove = true;
 
+//creates grid array
 function drawGrid(gridsize){
 	for(i = 0; i < gridsize; i++){
 		theGrid.push([]);
@@ -22,7 +23,7 @@ function drawGrid(gridsize){
 		}
 
 	}
-
+//random image generator
 function randomImage(letter){
 	var index = Math.floor(Math.random()*8);
 	
@@ -31,13 +32,15 @@ function randomImage(letter){
 }
 
 
+
+//resets base game functions
 function clearTheGrid(){
 	theGrid = [];
 	turn = 'x'
 	$('.container').remove();
 }
 
-
+//local save and load functions and constructor
 Storage = function(arr, turn, players){
 		this.arr = arr;
 		this.turn = turn;
@@ -79,7 +82,7 @@ Storage = function(arr, turn, players){
 			game.render()
 		}
 }
-
+//runs through rows and checks for win conditions
 function checkRows(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
@@ -103,7 +106,7 @@ function checkRows(arr, toWin){
 	}
 	return false;
 }
-
+//runs through columns and checks for win conditions
 function checkColumns(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
@@ -129,7 +132,7 @@ function checkColumns(arr, toWin){
 	}
 	return false;
 }
-
+//runs through diagonals and checks win conditions
 function checkDiagonal(arr, toWin){
 	var xCount = 0;
 	var oCount = 0;
@@ -158,40 +161,58 @@ function checkDiagonal(arr, toWin){
 	return false;
 }
 
+
+//incomplete function to light up squares on win
 function lightUp(source, placement, arr){
 	switch(source){
 		case 'row':
 			for(i=0; i< arr.length; i++ ){
 				$('#r'+placement+'c'+i).css('border-width', '2px').css('border-color', 'red');
-				break;
+				
 			}
+			break;
 		case 'column':
 				for(i=0; i< arr.length; i++ ){
 				$('#r'+i+'c'+placement).css('border-width', '2px').css('border-color', 'red');
+				
 			}
+			break;
+		case 'diagonal':
+				for(i = 0; i<arr.length; i++){
+					if(placement === 2){
+						$('#r'+i+'c'+(placement-i)).css('border-width', '2px').css('border-color', 'red');
+					} else {
+						$('#r'+i+'c'+i).css('border-width', '2px').css('border-color', 'red');
+					}
+				}
 	}
 }
 
+
+//runs through all win conditions
 function checkWinCondition(arr, toWin){
 
 var win = checkRows(arr)
 
 if(win[0]){
-	$('.save').toggle();
+	$('.save').remove();
+	lightUp('row', win[2], theGrid)
 	return [true, win[1]]
 }
 
 win = checkColumns(arr)
 
 if(win[0]){
-	$('.save').toggle();
+	$('.save').remove();
+	lightUp('column', win[2], theGrid)
 	return [true, win[1]]
 }
 
 win = checkDiagonal(arr)
 
 if(win[0]){
-	$('.save').toggle();
+	$('.save').remove();
+	lightUp('diagonal', win[2], theGrid)
 	return [true, win[1]]
 
 }
@@ -217,7 +238,7 @@ function randomComputerMove(arr){
 
 }
 
-function computerTurn(arr, toWin){
+function computerTurn(arr){
 			var gridsize=arr.length
 			
 			if(tieCounter===(gridsize*gridsize)){
@@ -462,7 +483,7 @@ Game = function(gridsize, players, toWin){
 			$('.playernames').toggle();
 			$('#player1').val('');
 			$('#player2').val('');
-			$('.save').toggle();
+			$('.save').remove();
 		})
 		$('body').prepend($save)
 		theGrid.forEach(function(element, indexI){
