@@ -2,9 +2,13 @@
 	width: 890px;
 }
 
+#title {
+	text-align: center;
+}
+
 .box{
-	height: 30%;
-	width: 30%;
+	height: 50px;
+	width: 50px;
 	text-align: center;
 	vertical-align: middle;
 	display: inline-block;
