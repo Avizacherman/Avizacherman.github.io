@@ -1,4 +1,4 @@
-# Tic Taco Toe
+# Tic Tac Toe
 
 [Tic Tac Toe](avizacherman.github.io)
 
