@@ -1,6 +1,6 @@
 # Tic Taco Toe
 
-(Tic Tac Toe)[avizacherman.github.io]
+[Tic Tac Toe](avizacherman.github.io)
 
 My first web development project EVER! The code is messy, but it accomplishes it's purpose. Variable difficulty levels, scalable to 10 x 10 tic-tac-toe, two player mode, victory highlighting. 
 
